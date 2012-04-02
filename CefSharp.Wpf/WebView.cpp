@@ -647,4 +647,22 @@ namespace Wpf
 			Dispatcher->BeginInvoke(DispatcherPriority::Render, _paintDelegate);
 		}
     }
+
+	String^ WebView::GetPageSource()
+	{
+		_browserCore->CheckBrowserInitialization();
+
+		CefRefPtr<CefBrowser> browser;
+		if (TryGetCefBrowser(browser))
+		{
+			MCefRefPtr<PageSource> ps = new PageSource();
+			String^ source = ps->GetPageSource(browser);
+			return source;
+		}
+	}
+
+	void WebView::OnLoadError()
+	{
+		_browserCore->OnLoadError();
+	}
 }}

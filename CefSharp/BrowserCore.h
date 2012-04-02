@@ -39,6 +39,9 @@ namespace CefSharp
 
     public:
         virtual event PropertyChangedEventHandler^ PropertyChanged;
+		virtual event EventHandler^ FrameFinishedLoading;
+		virtual event EventHandler^ FrameStartedLoading;
+		virtual event EventHandler^ LoadError;
 
         BrowserCore(String^ address)
         {
@@ -176,5 +179,6 @@ namespace CefSharp
         void OnLoad();
         void OnFrameLoadStart();
         void OnFrameLoadEnd();
+		void OnLoadError();
     };
 }

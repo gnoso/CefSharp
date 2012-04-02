@@ -342,4 +342,10 @@ namespace WinForms
     {
         SelectNextControl(this, next, true, true, true);
     }
+	
+	void WebView::OnLoadError()
+	{
+		_browserCore->OnLoadError();
+	}
+
 }}

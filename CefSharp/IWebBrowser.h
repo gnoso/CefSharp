@@ -63,6 +63,7 @@ namespace CefSharp
 
         void OnFrameLoadStart();
         void OnFrameLoadEnd();
+		void OnLoadError();
         void OnTakeFocus(bool next);
         void OnConsoleMessage(String^ message, String^ source, int line);
     };
