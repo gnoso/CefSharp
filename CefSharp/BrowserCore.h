@@ -13,6 +13,7 @@ namespace CefSharp
     interface class IBeforeResourceLoad;
     interface class IBeforeMenu;
     interface class IAfterResponse;
+	interface class IDownload;
 
     public ref class BrowserCore : INotifyPropertyChanged
     {
@@ -36,6 +37,7 @@ namespace CefSharp
         IBeforeResourceLoad^ _beforeResourceLoadHandler;
         IBeforeMenu^ _beforeMenuHandler;
         IAfterResponse^ _afterResponseHandler;
+		IDownload^ _downloadHandler;
 
     public:
         virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -169,6 +171,12 @@ namespace CefSharp
         {
             IAfterResponse^ get() { return _afterResponseHandler; }
             void set(IAfterResponse^ handler) { _afterResponseHandler = handler; }
+        }
+
+		virtual property IDownload^ DownloadHandler
+        {
+            IDownload^ get() { return _downloadHandler; }
+            void set(IDownload^ handler) { _downloadHandler = handler; }
         }
 
         void CheckBrowserInitialization();

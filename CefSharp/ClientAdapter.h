@@ -41,6 +41,7 @@ namespace CefSharp
         virtual CefRefPtr<CefV8ContextHandler> GetV8ContextHandler() OVERRIDE { return this; }
         virtual CefRefPtr<CefMenuHandler> GetMenuHandler() OVERRIDE { return this; }
         virtual CefRefPtr<CefFocusHandler> GetFocusHandler() OVERRIDE { return this; }
+		virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() { return this; }
 
         // CefLifeSpanHandler
         virtual DECL bool OnBeforePopup(CefRefPtr<CefBrowser> parentBrowser, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, const CefString& url, CefRefPtr<CefClient>& client, CefBrowserSettings& settings) OVERRIDE;
@@ -56,6 +57,7 @@ namespace CefSharp
         virtual DECL bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, NavType navType, bool isRedirect) OVERRIDE;
         virtual DECL bool OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefRequest> request, CefString& redirectUrl, CefRefPtr<CefStreamReader>& resourceStream, CefRefPtr<CefResponse> response, int loadFlags) OVERRIDE;
         virtual DECL void OnResourceResponse(CefRefPtr<CefBrowser> browser, const CefString& url, CefRefPtr<CefResponse> response, CefRefPtr<CefContentFilter>& filter) OVERRIDE;
+		virtual DECL bool GetDownloadHandler(CefRefPtr<CefBrowser> browser, const CefString& mimeType, const CefString& fileName, int64 contentLength, CefRefPtr<CefDownloadHandler>& handler) OVERRIDE;
 
         // CefDisplayHandler
         virtual DECL void OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& url) OVERRIDE;
@@ -72,6 +74,10 @@ namespace CefSharp
 
         // CefFocusHandler
         virtual DECL void OnTakeFocus(CefRefPtr<CefBrowser> browser, bool next) OVERRIDE;
+
+		// CefDownloadHandler
+		virtual DECL void Complete() OVERRIDE;
+		virtual DECL bool ReceivedData(void* data, int data_size) OVERRIDE;
 
         IMPLEMENT_LOCKING(ClientAdapter);
         IMPLEMENT_REFCOUNTING(ClientAdapter);

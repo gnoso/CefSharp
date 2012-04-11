@@ -8,6 +8,7 @@
 #include "IBeforeResourceLoad.h"
 #include "IBeforeMenu.h"
 #include "IAfterResponse.h"
+#include "IDownload.h"
 #include "StreamAdapter.h"
 
 namespace CefSharp
@@ -210,5 +211,35 @@ namespace CefSharp
 		return false;
 	}
 
+	bool ClientAdapter::ReceivedData(void* data, int data_size)
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		
+		/*gcroot<Stream^> stream;
+		array<Byte>^ buffer = gcnew array<Byte>(data_size);
+		int ret = stream->Read(buffer, 0, data_size);
+		pin_ptr<Byte> src = &buffer[0];
+		memcpy(data, static_cast<void*>(src), ret);*/
 
+
+		return downloadHandler != nullptr && downloadHandler->HandleReceivedData();
+	}
+
+	void ClientAdapter::Complete()
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		if (downloadHandler != nullptr)
+		{
+			downloadHandler->HandleComplete();
+		}
+	}
+
+	bool ClientAdapter::GetDownloadHandler(CefRefPtr<CefBrowser> browser, const CefString& mimeType, const CefString& fileName, int64 contentLength, CefRefPtr<CefDownloadHandler>& handler)
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		String^ clrMimeType = toClr(mimeType);
+		String^ clrFileName = toClr(fileName);
+		handler = GetDownloadHandler();
+		return downloadHandler != nullptr && downloadHandler->HandleDownload(_browserControl, clrMimeType, clrFileName);
+	}
 }

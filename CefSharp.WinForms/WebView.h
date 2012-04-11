@@ -144,6 +144,12 @@ namespace WinForms
             void set(IAfterResponse^ handler) { _browserCore->AfterResponseHandler = handler; }
         }
 
+		virtual property IDownload^ DownloadHandler
+        {
+            IDownload^ get() { return _browserCore->DownloadHandler; }
+            void set(IDownload^ handler) { _browserCore->DownloadHandler = handler; }
+        }
+
         virtual void OnInitialized();
 
         virtual void Load(String^ url);

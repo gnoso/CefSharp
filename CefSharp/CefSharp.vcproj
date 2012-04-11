@@ -315,6 +315,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IDownload.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IRenderWebBrowser.h"
 				>
 			</File>
