@@ -14,6 +14,6 @@ namespace CefSharp
     public:
 		bool HandleDownload(IWebBrowser^ browserControl, String^ mimeType, String^ fileName);	
 		void HandleComplete();
-		bool HandleReceivedData();
+		bool HandleReceivedData(array<Byte>^ data);
     };
 }

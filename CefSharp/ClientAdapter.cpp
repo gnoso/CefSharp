@@ -214,17 +214,13 @@ namespace CefSharp
 	bool ClientAdapter::ReceivedData(void* data, int data_size)
 	{
 		IDownload^ downloadHandler = _browserControl->DownloadHandler;
-		
-		/*gcroot<Stream^> stream;
-		array<Byte>^ buffer = gcnew array<Byte>(data_size);
-		int ret = stream->Read(buffer, 0, data_size);
-		pin_ptr<Byte> src = &buffer[0];
-		memcpy(data, static_cast<void*>(src), ret);*/
+		IntPtr ptr = IntPtr(data);
+		array<Byte>^ barray = gcnew array<Byte>(data_size);
+		System::Runtime::InteropServices::Marshal::Copy(ptr, barray, 0, data_size);
 
-
-		return downloadHandler != nullptr && downloadHandler->HandleReceivedData();
+		return downloadHandler != nullptr && downloadHandler->HandleReceivedData(barray);
 	}
-
+ 
 	void ClientAdapter::Complete()
 	{
 		IDownload^ downloadHandler = _browserControl->DownloadHandler;
