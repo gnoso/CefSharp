@@ -16,3 +16,6 @@ bin/
 CefSharp/app.aps
 TestResult.xml
 debug.log
+
+Debug/
+Release/
