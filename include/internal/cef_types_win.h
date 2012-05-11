@@ -28,12 +28,15 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#ifndef _CEF_TYPES_WIN_H
-#define _CEF_TYPES_WIN_H
+#ifndef CEF_INCLUDE_INTERNAL_CEF_TYPES_WIN_H_
+#define CEF_INCLUDE_INTERNAL_CEF_TYPES_WIN_H_
+#pragma once
+
+#include "include/internal/cef_build.h"
 
 #if defined(OS_WIN)
 #include <windows.h>
-#include "cef_string.h"
+#include "include/internal/cef_string.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,10 +47,19 @@ extern "C" {
 #define cef_cursor_handle_t HCURSOR
 
 ///
+// Supported graphics implementations.
+///
+enum cef_graphics_implementation_t {
+  ANGLE_IN_PROCESS = 0,
+  ANGLE_IN_PROCESS_COMMAND_BUFFER,
+  DESKTOP_IN_PROCESS,
+  DESKTOP_IN_PROCESS_COMMAND_BUFFER,
+};
+
+///
 // Class representing window information.
 ///
-typedef struct _cef_window_info_t
-{
+typedef struct _cef_window_info_t {
   // Standard parameters required by CreateWindowEx()
   DWORD m_dwExStyle;
   cef_string_t m_windowName;
@@ -63,7 +75,10 @@ typedef struct _cef_window_info_t
   // |m_hWndParent| to the window that will act as the parent for popup menus,
   // dialog boxes, etc.
   BOOL m_bWindowRenderingDisabled;
-  
+
+  // Set to true to enable transparent painting.
+  BOOL m_bTransparentPainting;
+
   // Handle for the new browser window.
   cef_window_handle_t m_hWnd;
 } cef_window_info_t;
@@ -71,8 +86,7 @@ typedef struct _cef_window_info_t
 ///
 // Class representing print context information.
 ///
-typedef struct _cef_print_info_t
-{
+typedef struct _cef_print_info_t {
   HDC m_hDC;
   RECT m_Rect;
   double m_Scale;
@@ -82,6 +96,6 @@ typedef struct _cef_print_info_t
 }
 #endif
 
-#endif // OS_WIN
+#endif  // OS_WIN
 
-#endif // _CEF_TYPES_WIN_H
+#endif  // CEF_INCLUDE_INTERNAL_CEF_TYPES_WIN_H_

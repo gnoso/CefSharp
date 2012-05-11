@@ -5,7 +5,6 @@ namespace CefSharp
 {
     public ref class BrowserSettings
     {
-
     internal:
         CefBrowserSettings* _browserSettings;
 
@@ -13,6 +12,60 @@ namespace CefSharp
         BrowserSettings() : _browserSettings(new CefBrowserSettings()) { }
         !BrowserSettings() { delete _browserSettings; }
         ~BrowserSettings() { delete _browserSettings; }
+
+        property bool DragDropDisabled
+        {
+            bool get() { return _browserSettings->drag_drop_disabled; }
+            void set(bool value) { _browserSettings->drag_drop_disabled = value; }
+        }
+
+        property bool LoadDropsDisabled
+        {
+            bool get() { return _browserSettings->load_drops_disabled; }
+            void set(bool value) { _browserSettings->load_drops_disabled = value; }
+        }
+
+        property bool HistoryDisabled
+        {
+            bool get() { return _browserSettings->history_disabled; }
+            void set(bool value) { _browserSettings->history_disabled = value; }
+        }
+
+        property String^ StandardFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->standard_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->standard_font_family, value); }
+        }
+
+        property String^ FixedFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->fixed_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->fixed_font_family, value); }
+        }
+
+        property String^ SerifFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->serif_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->serif_font_family, value); }
+        }
+
+        property String^ SansSerifFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->sans_serif_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->sans_serif_font_family, value); }
+        }
+
+        property String^ CursiveFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->cursive_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->cursive_font_family, value); }
+        }
+
+        property String^ FantasyFontFamily
+        {
+            String^ get() { return toClr(_browserSettings->fantasy_font_family); }
+            void set(String^ value) { assignFromString(_browserSettings->fantasy_font_family, value); }
+        }
 
         property int DefaultFontSize
         {
@@ -212,10 +265,10 @@ namespace CefSharp
             void set(bool value) { _browserSettings->webgl_disabled = value; }
         }
 
-        property bool AcceleratedCompositingDisabled
+        property bool AcceleratedCompositingEnabled
         {
-            bool get() { return _browserSettings->accelerated_compositing_disabled; }
-            void set(bool value) { _browserSettings->accelerated_compositing_disabled = value; }
+            bool get() { return _browserSettings->accelerated_compositing_enabled; }
+            void set(bool value) { _browserSettings->accelerated_compositing_enabled = value; }
         }
 
         property bool AcceleratedLayersDisabled
@@ -230,12 +283,34 @@ namespace CefSharp
             void set(bool value) { _browserSettings->accelerated_2d_canvas_disabled = value; }
         }
 
-        property bool DragDropDisabled
+        property bool AcceleratedPaintingDisabled
         {
-            bool get() { return _browserSettings->drag_drop_disabled; }
-            void set(bool value) { _browserSettings->drag_drop_disabled = value; }
+            bool get() { return _browserSettings->accelerated_painting_disabled; }
+            void set(bool value) { _browserSettings->accelerated_painting_disabled = value; }
         }
 
-    };
+        property bool AcceleratedFiltersDisabled
+        {
+            bool get() { return _browserSettings->accelerated_filters_disabled; }
+            void set(bool value) { _browserSettings->accelerated_filters_disabled = value; }
+        }
 
+        property bool AcceleratedPluginsDisabled
+        {
+            bool get() { return _browserSettings->accelerated_plugins_disabled; }
+            void set(bool value) { _browserSettings->accelerated_plugins_disabled = value; }
+        }
+
+        property bool DeveloperToolsDisabled
+        {
+            bool get() { return _browserSettings->developer_tools_disabled; }
+            void set(bool value) { _browserSettings->developer_tools_disabled = value; }
+        }
+
+        property bool FullscreenEnabled
+        {
+            bool get() { return _browserSettings->fullscreen_enabled; }
+            void set(bool value) { _browserSettings->fullscreen_enabled = value; }
+        }
+    };
 }

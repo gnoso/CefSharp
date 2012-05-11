@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "BindingHandler.h"
-#include "Utils.h"
 
 namespace CefSharp
 {
@@ -249,7 +248,7 @@ namespace CefSharp
     {
         CefRefPtr<BindingData> bindingData = new BindingData(obj);
         CefRefPtr<CefBase> userData = static_cast<CefRefPtr<CefBase>>(bindingData);
-        CefRefPtr<CefV8Value> wrappedObject = window->CreateObject(userData);
+        CefRefPtr<CefV8Value> wrappedObject = window->CreateObject(userData, NULL);
         CefRefPtr<CefV8Handler> handler = static_cast<CefV8Handler*>(new BindingHandler());
 
         array<MethodInfo^>^ methods = obj->GetType()->GetMethods(BindingFlags::Instance | BindingFlags::Public);
@@ -266,9 +265,9 @@ namespace CefSharp
         for each(String^ methodName in methodNames)
         {
             CefString nameStr = toNative(methodName);
-            wrappedObject->SetValue(nameStr, CefV8Value::CreateFunction(nameStr, handler));
+            wrappedObject->SetValue(nameStr, CefV8Value::CreateFunction(nameStr, handler), V8_PROPERTY_ATTRIBUTE_NONE);
         }
 
-        window->SetValue(toNative(name), wrappedObject);
+        window->SetValue(toNative(name), wrappedObject, V8_PROPERTY_ATTRIBUTE_NONE);
     }
 }

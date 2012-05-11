@@ -8,11 +8,10 @@ using namespace System::IO;
 
 namespace CefSharp
 {
-
     public interface class IRequestResponse
     {
         /// cancel the request, return nothing
-        void Cancel();        
+        void Cancel();
         /// the current request
         property IRequest^ Request { IRequest^ get(); };
         /// respond with redirection to the provided URL
@@ -32,12 +31,11 @@ namespace CefSharp
         IRequest^ _request;
         Stream^ _responseStream;
         String^ _mimeType;
-        String^ _redirectUrl;        
+        String^ _redirectUrl;
         ResponseAction _action;
 
     internal:
-
-        RequestResponse(IRequest^ request) : 
+        RequestResponse(IRequest^ request) :
             _action(ResponseAction::Continue),
             _request(request) {}
 
@@ -47,7 +45,6 @@ namespace CefSharp
         property ResponseAction Action { ResponseAction get() { return _action; } }
 
     public:
-
         virtual void Cancel();
         virtual property IRequest^ Request { IRequest^ get() { return _request; } }
         virtual void Redirect(String^ url);
