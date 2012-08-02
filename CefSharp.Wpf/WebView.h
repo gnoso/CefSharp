@@ -6,6 +6,7 @@
     
 using namespace Microsoft::Win32::SafeHandles;
 using namespace System;
+using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 using namespace System::Runtime::InteropServices;
 using namespace System::Windows;
@@ -32,16 +33,26 @@ namespace Wpf
         MCefRefPtr<RenderClientAdapter> _clientAdapter;
         BrowserCore^ _browserCore;
         MCefRefPtr<ScriptCore> _scriptCore;
-
-        Image^ _image;
+		
+        HwndSource^ _source;
         Matrix^ _matrix;
+        HwndSourceHook^ _hook;
         ::ToolTip^ _toolTip;
+        Popup^ _popup;
         DispatcherTimer^ _timer;
 
+        Image^ _image;
         int _width, _height;
         InteropBitmap^ _ibitmap;
 		HANDLE _fileMappingHandle, _backBufferHandle;
 		ActionHandler^ _paintDelegate;
+        
+        Image^ _popupImage;
+        int _popupWidth, _popupHeight, _popupX, _popupY;
+        InteropBitmap^ _popupIbitmap;
+        HANDLE _popupFileMappingHandle, _popupBackBufferHandle;
+        ActionHandler^ _paintPopupDelegate;
+        ActionHandler^ _resizePopupDelegate;
 
         void Initialize(String^ address, BrowserSettings^ settings);
         bool TryGetCefBrowser(CefRefPtr<CefBrowser>& browser);
@@ -52,15 +63,34 @@ namespace Wpf
         void SetTooltipText(String^ text);
         IntPtr SourceHook(IntPtr hWnd, int message, IntPtr wParam, IntPtr lParam, bool% handled);
 		void SetBitmap();
+
+        void SetBuffer(int& currentWidth, int& currentHeight, int width, int height,
+                       HANDLE& fileMappingHandle, HANDLE& backBufferHandle,
+                       InteropBitmap^& ibitmap, ActionHandler^ paintDelegate,
+                       const void* buffer);
+
+        void SetPopupBitmap();
         void OnPreviewKey(KeyEventArgs^ e);
         void OnMouseButton(MouseButtonEventArgs^ e);
 
+        void ShowHidePopup(bool isOpened);
+        void SetPopupSizeAndPositionImpl();
+		
+        void OnPopupMouseMove(Object^ sender, MouseEventArgs^ e);
+        void OnPopupMouseWheel(Object^ sender,MouseWheelEventArgs^ e) ;
+        void OnPopupMouseDown(Object^ sender,MouseButtonEventArgs^ e) ;
+        void OnPopupMouseUp(Object^ sender, MouseButtonEventArgs^ e) ;
+        void OnPopupMouseLeave(Object^ sender, MouseEventArgs^ e) ;
+        void OnWindowLocationChanged(Object^ sender, EventArgs^ e) ;
+        void HidePopup();
+		
     protected:
         virtual Size ArrangeOverride(Size size) override;
         virtual void OnGotFocus(RoutedEventArgs^ e) override;
         virtual void OnLostFocus(RoutedEventArgs^ e) override;
         virtual void OnPreviewKeyDown(KeyEventArgs^ e) override;
         virtual void OnPreviewKeyUp(KeyEventArgs^ e) override;
+
         virtual void OnMouseMove(MouseEventArgs^ e) override;
         virtual void OnMouseWheel(MouseWheelEventArgs^ e) override;
         virtual void OnMouseDown(MouseButtonEventArgs^ e) override;
@@ -82,6 +112,7 @@ namespace Wpf
         }
 
         virtual event ConsoleMessageEventHandler^ ConsoleMessage;
+        virtual event KeyEventHandler^ BrowserKey;
 
         WebView()
         {
@@ -95,6 +126,11 @@ namespace Wpf
 
         ~WebView()
         {
+            if (_source && _hook)
+            {
+                _source->RemoveHook(_hook);
+            }
+
             CefRefPtr<CefBrowser> browser;
             if (TryGetCefBrowser(browser))
             {
@@ -152,40 +188,39 @@ namespace Wpf
             void set(String^ text) { _browserCore->TooltipText = text; }
         }
 
-        virtual property IBeforePopup^ BeforePopupHandler
+                virtual property ILifeSpanHandler^ LifeSpanHandler
         {
-            IBeforePopup^ get() { return _browserCore->BeforePopupHandler; }
-            void set(IBeforePopup^ handler) { _browserCore->BeforePopupHandler = handler; }
+            ILifeSpanHandler^ get() { return _browserCore->LifeSpanHandler; }
+            void set(ILifeSpanHandler^ handler) { _browserCore->LifeSpanHandler = handler; }
         }
 
-        virtual property IBeforeBrowse^ BeforeBrowseHandler
+        virtual property ILoadHandler^ LoadHandler
         {
-            IBeforeBrowse^ get() { return _browserCore->BeforeBrowseHandler; }
-            void set(IBeforeBrowse^ handler) { _browserCore->BeforeBrowseHandler = handler; }
+            ILoadHandler^ get() { return _browserCore->LoadHandler; }
+            void set(ILoadHandler^ handler) { _browserCore->LoadHandler = handler; }
         }
 
-        virtual property IBeforeResourceLoad^ BeforeResourceLoadHandler
+        virtual property IRequestHandler^ RequestHandler
         {
-            IBeforeResourceLoad^ get() { return _browserCore->BeforeResourceLoadHandler; }
-            void set(IBeforeResourceLoad^ handler) { _browserCore->BeforeResourceLoadHandler = handler; }
+            IRequestHandler^ get() { return _browserCore->RequestHandler; }
+            void set(IRequestHandler^ handler) { _browserCore->RequestHandler = handler; }
         }
 
-        virtual property IBeforeMenu^ BeforeMenuHandler
+        virtual property IMenuHandler^ MenuHandler
         {
-            IBeforeMenu^ get() { return _browserCore->BeforeMenuHandler; }
-            void set(IBeforeMenu^ handler) { _browserCore->BeforeMenuHandler = handler; }
+            IMenuHandler^ get() { return _browserCore->MenuHandler; }
+            void set(IMenuHandler^ handler) { _browserCore->MenuHandler = handler; }
         }
 
-        virtual property IAfterResponse^ AfterResponseHandler
+        virtual property IKeyboardHandler^ KeyboardHandler
         {
-            IAfterResponse^ get() { return _browserCore->AfterResponseHandler; }
-            void set(IAfterResponse^ handler) { _browserCore->AfterResponseHandler = handler; }
+            IKeyboardHandler^ get() { return _browserCore->KeyboardHandler; }
+            void set(IKeyboardHandler^ handler) { _browserCore->KeyboardHandler = handler; }
         }
 
-        virtual property IAfterLoadError^ AfterLoadErrorHandler
+        virtual property BrowserCore^ Core
         {
-            IAfterLoadError^ get() { return _browserCore->AfterLoadErrorHandler; }
-            void set(IAfterLoadError^ handler) { _browserCore->AfterLoadErrorHandler = handler; }
+            BrowserCore^ get() { return _browserCore; }
         }
 
         virtual void OnInitialized();
@@ -221,8 +256,16 @@ namespace Wpf
         virtual void OnTakeFocus(bool next);
         virtual void OnConsoleMessage(String^ message, String^ source, int line);
 
+        virtual void RegisterJsObject(String^ name, Object^ objectToBind);
+        virtual IDictionary<String^, Object^>^ GetBoundObjects();
+
         virtual void OnApplyTemplate() override;
         virtual void SetCursor(CefCursorHandle cursor);
         virtual void SetBuffer(int width, int height, const void* buffer);
+        virtual void SetPopupBuffer(int width, int height, const void* buffer);
+
+        virtual void SetPopupIsOpen(bool isOpen);
+        virtual void SetPopupSizeAndPosition(const CefRect& rect);
+
     };
 }}

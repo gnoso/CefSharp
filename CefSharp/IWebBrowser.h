@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #pragma once
 
+#include "BrowserCore.h"
 #include "ConsoleMessageEventArgs.h"
 
 using namespace System;
@@ -8,12 +9,11 @@ using namespace System::ComponentModel;
 
 namespace CefSharp
 {
-    interface class IBeforePopup;
-    interface class IBeforeBrowse;
-    interface class IBeforeResourceLoad;
-    interface class IBeforeMenu;
-    interface class IAfterResponse;
-    interface class IAfterLoadError;
+    interface class ILifeSpanHandler;
+    interface class ILoadHandler;
+    interface class IRequestHandler;
+    interface class IMenuHandler;
+    interface class IKeyboardHandler;
 
     public interface class IWebBrowser : IDisposable, INotifyPropertyChanged
     {
@@ -32,12 +32,11 @@ namespace CefSharp
         property String^ Title;
         property String^ TooltipText;
 
-        property IBeforePopup^ BeforePopupHandler;
-        property IBeforeBrowse^ BeforeBrowseHandler;
-        property IBeforeResourceLoad^ BeforeResourceLoadHandler;
-        property IBeforeMenu^ BeforeMenuHandler;
-        property IAfterResponse^ AfterResponseHandler;
-        property IAfterLoadError^ AfterLoadErrorHandler;
+        property ILifeSpanHandler^ LifeSpanHandler;
+        property ILoadHandler^ LoadHandler;
+        property IRequestHandler^ RequestHandler;
+        property IMenuHandler^ MenuHandler;
+        property IKeyboardHandler^ KeyboardHandler;
 
         void OnInitialized();
 
@@ -67,5 +66,8 @@ namespace CefSharp
         void OnFrameLoadEnd();
         void OnTakeFocus(bool next);
         void OnConsoleMessage(String^ message, String^ source, int line);
+
+        void RegisterJsObject(String^ name, Object^ objectToBind);
+        IDictionary<String^, Object^>^ GetBoundObjects();
     };
 }

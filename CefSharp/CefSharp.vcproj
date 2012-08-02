@@ -206,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CookieVisitor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\RenderClientAdapter.cpp"
 				>
 			</File>
@@ -292,31 +296,35 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IAfterLoadError.h"
+				RelativePath=".\CookieVisitor.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IAfterResponse.h"
+				RelativePath=".\ICookieVisitor.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IBeforeBrowse.h"
+				RelativePath=".\IKeyboardHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IBeforeMenu.h"
+				RelativePath=".\ILifeSpanHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IBeforePopup.h"
+				RelativePath=".\ILoadHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IBeforeResourceLoad.h"
+				RelativePath=".\IMenuHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\IRenderWebBrowser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IRequestHandler.h"
 				>
 			</File>
 			<File

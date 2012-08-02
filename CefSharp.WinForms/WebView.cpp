@@ -303,7 +303,7 @@ namespace WinForms
 
     Object^ WebView::EvaluateScript(String^ script, TimeSpan timeout)
     {
-	    _browserCore->CheckBrowserInitialization();
+        _browserCore->CheckBrowserInitialization();
 
         CefRefPtr<CefBrowser> browser;
         if (TryGetCefBrowser(browser))
@@ -340,5 +340,15 @@ namespace WinForms
     void WebView::OnTakeFocus(bool next)
     {
         SelectNextControl(this, next, true, true, true);
+    }
+
+    void WebView::RegisterJsObject(String^ name, Object^ objectToBind)
+    {
+        _browserCore->RegisterJsObject(name, objectToBind);
+    }
+
+    IDictionary<String^, Object^>^ WebView::GetBoundObjects()
+    {
+        return _browserCore->GetBoundObjects();
     }
 }}

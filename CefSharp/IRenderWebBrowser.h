@@ -10,5 +10,10 @@ namespace CefSharp
     public:
         void SetCursor(CefCursorHandle cursor);
         void SetBuffer(int width, int height, const void* buffer);
+
+        void SetPopupBuffer(int width, int height, const void* buffer);
+        void SetPopupIsOpen(bool isOpen);
+
+        void SetPopupSizeAndPosition(const CefRect& rect);
     };
 }
