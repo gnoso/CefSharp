@@ -4,6 +4,10 @@
         "CefSharp"
     </assembly>
     <members>
+        <member name="M:CefSharp.BindingHandler.GetChangeTypeCost(System.Object,System.Type)">
+            <summary />
+            <return>Returns conversion cost, or -1 if no conversion available.</return>
+        </member>
         <member name="M:CefSharp.IRequestResponse.RespondWith(System.IO.Stream,System.String)">
 respond with data from Stream
 </member>
@@ -16,18 +20,14 @@ the current request
         <member name="M:CefSharp.IRequestResponse.Cancel">
 cancel the request, return nothing
 </member>
+        <member name="T:CefSharp.RtzCountdownEvent">
+            <summary>Return-To-Zero latch, signals whenever count is zero</summary>
+        </member>
         <member name="M:CefSharp.ISchemeHandler.ProcessRequest(CefSharp.IRequest,System.String@,System.IO.Stream@)">
             <summary>
 if request is handled return true and set mimeType and stream accordingly.
 if no data the leave stream null
 </summary>
-        </member>
-        <member name="M:CefSharp.BindingHandler.GetChangeTypeCost(System.Object,System.Type)">
-            <summary />
-            <return>Returns conversion cost, or -1 if no conversion available.</return>
-        </member>
-        <member name="T:CefSharp.RtzCountdownEvent">
-            <summary>Return-To-Zero latch, signals whenever count is zero</summary>
         </member>
     </members>
 </doc>

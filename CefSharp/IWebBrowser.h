@@ -14,11 +14,6 @@ namespace CefSharp
     interface class IRequestHandler;
     interface class IMenuHandler;
     interface class IKeyboardHandler;
-    interface class IBeforePopup;
-    interface class IBeforeBrowse;
-    interface class IBeforeResourceLoad;
-    interface class IBeforeMenu;
-    interface class IAfterResponse;
 	interface class IDownload;
 
     public interface class IWebBrowser : IDisposable, INotifyPropertyChanged
@@ -43,11 +38,6 @@ namespace CefSharp
         property IRequestHandler^ RequestHandler;
         property IMenuHandler^ MenuHandler;
         property IKeyboardHandler^ KeyboardHandler;
-        property IBeforePopup^ BeforePopupHandler;
-        property IBeforeBrowse^ BeforeBrowseHandler;
-        property IBeforeResourceLoad^ BeforeResourceLoadHandler;
-        property IBeforeMenu^ BeforeMenuHandler;
-        property IAfterResponse^ AfterResponseHandler;
 		property IDownload^ DownloadHandler;
 
         void OnInitialized();

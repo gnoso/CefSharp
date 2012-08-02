@@ -2,11 +2,6 @@
 #include "BindingHandler.h"
 #include "ClientAdapter.h"
 #include "CefSharp.h"
-#include "IBeforePopup.h"
-#include "IBeforeBrowse.h"
-#include "IBeforeResourceLoad.h"
-#include "IBeforeMenu.h"
-#include "IAfterResponse.h"
 #include "IDownload.h"
 #include "StreamAdapter.h"
 #include "IWebBrowser.h"
@@ -252,23 +247,6 @@ namespace CefSharp
     {
         _browserControl->OnTakeFocus(next);
     }
-
-	bool ClientAdapter::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, CefString& errorText)
-	{
-		if(browser->IsPopup())
-       {
-           return false;
-       }
-
-       AutoLock lock_scope(this);
-       if (frame->IsMain())
-       {
-           _browserControl->SetNavState(false, browser->CanGoBack(), browser->CanGoForward());
-       }
-
-		_browserControl->OnLoadError();
-		return false;
-	}
 
 	bool ClientAdapter::ReceivedData(void* data, int data_size)
 	{
