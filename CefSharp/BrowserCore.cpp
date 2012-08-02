@@ -57,10 +57,20 @@ namespace CefSharp
     void BrowserCore::OnFrameLoadStart()
     {
         _loadCompleted->AddCount();
+		FrameStartedLoading(this, gcnew EventArgs());
+
     }
 
     void BrowserCore::OnFrameLoadEnd()
     {
         _loadCompleted->Signal();
+		FrameFinishedLoading(this, gcnew EventArgs());
+
     }
+	
+	void BrowserCore::OnLoadError()
+	{
+		LoadError(this, gcnew EventArgs());
+	}
+
 }

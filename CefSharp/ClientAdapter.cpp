@@ -1,8 +1,13 @@
 #include "stdafx.h"
-
 #include "BindingHandler.h"
 #include "ClientAdapter.h"
 #include "CefSharp.h"
+#include "IBeforePopup.h"
+#include "IBeforeBrowse.h"
+#include "IBeforeResourceLoad.h"
+#include "IBeforeMenu.h"
+#include "IAfterResponse.h"
+#include "IDownload.h"
 #include "StreamAdapter.h"
 #include "IWebBrowser.h"
 #include "ILifeSpanHandler.h"
@@ -247,4 +252,49 @@ namespace CefSharp
     {
         _browserControl->OnTakeFocus(next);
     }
+
+	bool ClientAdapter::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& failedUrl, CefString& errorText)
+	{
+		if(browser->IsPopup())
+       {
+           return false;
+       }
+
+       AutoLock lock_scope(this);
+       if (frame->IsMain())
+       {
+           _browserControl->SetNavState(false, browser->CanGoBack(), browser->CanGoForward());
+       }
+
+		_browserControl->OnLoadError();
+		return false;
+	}
+
+	bool ClientAdapter::ReceivedData(void* data, int data_size)
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		IntPtr ptr = IntPtr(data);
+		array<Byte>^ barray = gcnew array<Byte>(data_size);
+		System::Runtime::InteropServices::Marshal::Copy(ptr, barray, 0, data_size);
+
+		return downloadHandler != nullptr && downloadHandler->HandleReceivedData(barray);
+	}
+ 
+	void ClientAdapter::Complete()
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		if (downloadHandler != nullptr)
+		{
+			downloadHandler->HandleComplete();
+		}
+	}
+
+	bool ClientAdapter::GetDownloadHandler(CefRefPtr<CefBrowser> browser, const CefString& mimeType, const CefString& fileName, int64 contentLength, CefRefPtr<CefDownloadHandler>& handler)
+	{
+		IDownload^ downloadHandler = _browserControl->DownloadHandler;
+		String^ clrMimeType = toClr(mimeType);
+		String^ clrFileName = toClr(fileName);
+		handler = GetDownloadHandler();
+		return downloadHandler != nullptr && downloadHandler->HandleDownload(_browserControl, clrMimeType, clrFileName);
+	}
 }

@@ -14,6 +14,12 @@ namespace CefSharp
     interface class IRequestHandler;
     interface class IMenuHandler;
     interface class IKeyboardHandler;
+    interface class IBeforePopup;
+    interface class IBeforeBrowse;
+    interface class IBeforeResourceLoad;
+    interface class IBeforeMenu;
+    interface class IAfterResponse;
+	interface class IDownload;
 
     public ref class BrowserCore : INotifyPropertyChanged
     {
@@ -37,11 +43,19 @@ namespace CefSharp
         IRequestHandler^ _requestHandler;
         IMenuHandler^ _menuHandler;
         IKeyboardHandler^ _keyboardHandler;
-
         IDictionary<String^, Object^>^ _boundObjects;
+        IBeforePopup^ _beforePopupHandler;
+        IBeforeBrowse^ _beforeBrowseHandler;
+        IBeforeResourceLoad^ _beforeResourceLoadHandler;
+        IBeforeMenu^ _beforeMenuHandler;
+        IAfterResponse^ _afterResponseHandler;
+		IDownload^ _downloadHandler;
 
     public:
         virtual event PropertyChangedEventHandler^ PropertyChanged;
+		virtual event EventHandler^ FrameFinishedLoading;
+		virtual event EventHandler^ FrameStartedLoading;
+		virtual event EventHandler^ LoadError;
 
         BrowserCore(String^ address)
         {
@@ -172,6 +186,12 @@ namespace CefSharp
             void set(IKeyboardHandler^ handler) { _keyboardHandler = handler; }
         }
 
+		virtual property IDownload^ DownloadHandler
+        {
+            IDownload^ get() { return _downloadHandler; }
+            void set(IDownload^ handler) { _downloadHandler = handler; }
+        }
+
         void CheckBrowserInitialization();
 
         void RegisterJsObject(String^ name, Object^ objectToBind);
@@ -183,5 +203,6 @@ namespace CefSharp
         void OnLoad();
         void OnFrameLoadStart();
         void OnFrameLoadEnd();
+		void OnLoadError();
     };
 }

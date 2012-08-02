@@ -3,6 +3,8 @@
 #include "BrowserSettings.h"
 #include "RenderClientAdapter.h"
 #include "ScriptCore.h"
+#include "PageSource.h"
+
     
 using namespace Microsoft::Win32::SafeHandles;
 using namespace System;
@@ -110,6 +112,42 @@ namespace Wpf
                 _browserCore->PropertyChanged -= handler;
             }
         }
+
+		virtual event EventHandler^ FrameFinishedLoading
+		{
+			void add(EventHandler^ handler)
+			{
+				_browserCore->FrameFinishedLoading += handler;
+			}
+			void remove(EventHandler^ handler)
+			{
+				_browserCore->FrameFinishedLoading -= handler;
+			}
+		}
+
+		virtual event EventHandler^ LoadError
+		{
+			void add(EventHandler^ handler)
+			{
+				_browserCore->LoadError += handler;
+			}
+			void remove(EventHandler^ handler)
+			{
+				_browserCore->LoadError -= handler;
+			}
+		}
+
+		virtual event EventHandler^ FrameStartedLoading
+		{
+			void add(EventHandler^ handler)
+			{
+				_browserCore->FrameStartedLoading += handler;
+			}
+			void remove(EventHandler^ handler)
+			{
+				_browserCore->FrameStartedLoading -= handler;
+			}
+		}
 
         virtual event ConsoleMessageEventHandler^ ConsoleMessage;
         virtual event KeyEventHandler^ BrowserKey;
@@ -223,6 +261,12 @@ namespace Wpf
             BrowserCore^ get() { return _browserCore; }
         }
 
+		virtual property IDownload^ DownloadHandler
+        {
+            IDownload^ get() { return _browserCore->DownloadHandler; }
+            void set(IDownload^ handler) { _browserCore->DownloadHandler = handler; }
+        }
+
         virtual void OnInitialized();
 
         virtual void Load(String^ url);
@@ -245,6 +289,8 @@ namespace Wpf
         virtual void SelectAll();
         virtual void Print();
 
+		virtual String^ GetPageSource();
+
         void ExecuteScript(String^ script);
         Object^ EvaluateScript(String^ script);
         Object^ EvaluateScript(String^ script, TimeSpan timeout);
@@ -253,6 +299,7 @@ namespace Wpf
 
         virtual void OnFrameLoadStart();
         virtual void OnFrameLoadEnd();
+		virtual void OnLoadError();
         virtual void OnTakeFocus(bool next);
         virtual void OnConsoleMessage(String^ message, String^ source, int line);
 

@@ -351,4 +351,9 @@ namespace WinForms
     {
         return _browserCore->GetBoundObjects();
     }
+
+	void WebView::OnLoadError()
+	{
+		_browserCore->OnLoadError();
+	}
 }}

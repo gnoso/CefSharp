@@ -151,6 +151,12 @@ namespace WinForms
             BrowserCore^ get() { return _browserCore; }
         }
 
+		virtual property IDownload^ DownloadHandler
+        {
+            IDownload^ get() { return _browserCore->DownloadHandler; }
+            void set(IDownload^ handler) { _browserCore->DownloadHandler = handler; }
+        }
+
         virtual void OnInitialized();
 
         virtual void Load(String^ url);
@@ -181,6 +187,7 @@ namespace WinForms
 
         virtual void OnFrameLoadStart();
         virtual void OnFrameLoadEnd();
+		virtual void OnLoadError();
         virtual void OnTakeFocus(bool next);
         virtual void OnConsoleMessage(String^ message, String^ source, int line);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,6 +51,7 @@ namespace CefSharp.Wpf.Example
         {
             InitializeComponent();
 
+            web_view.DownloadHandler = new DownloadHandler();
             var presenter = new ExamplePresenter(web_view, this,
                 invoke => Dispatcher.BeginInvoke(invoke));
 
@@ -149,6 +151,44 @@ namespace CefSharp.Wpf.Example
             {
                 handler(this, urlTextBox.Text);
             }
+        }
+
+        private class DownloadHandler : IDownload
+        {
+            private byte[] fileData;
+            private string fileName;
+
+            #region IDownload Members
+
+            public void HandleComplete()
+            {
+                File.WriteAllBytes(@"C:\blabla\" + fileName, fileData);
+                fileData = null;
+            }
+
+            public bool HandleDownload(IWebBrowser browserControl, string mimeType, string fileName)
+            {
+                this.fileName = fileName;
+                return true;
+            }
+
+            public bool HandleReceivedData(byte[] data)
+            {
+                if (fileData == null)
+                {
+                    fileData = new byte[0];
+                }
+
+                var appended = new byte[data.Length + fileData.Length];
+
+                Buffer.BlockCopy(fileData, 0, appended, 0, fileData.Length);
+                Buffer.BlockCopy(data, 0, appended, fileData.Length, data.Length);
+                fileData = appended;
+
+                return true;
+            }
+
+            #endregion
         }
     }
 }
